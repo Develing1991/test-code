@@ -46,4 +46,22 @@ describe('주문을 테스트한다.', () => {
         })
         // cy.visit('/restaurant')
     })
+
+    it('사용자는 원하는 메뉴를 장바구니에 담을 수 있다.', () => {
+        cy.visit('/restaurant/1')
+        cy.intercept(
+            {
+                method: 'GET',
+                url: '/restaurant/1',
+            },
+            {
+                fixture: 'menu.json',
+            }
+        )
+        cy.fixture('menu.json').then((menu) => {
+            cy.get(`[data-cy=${menu.menu_set[0].id}]`).should('be.visible').as('foodBtn')
+            cy.get().click()
+            cy.url().should()
+        })
+    })
 })
