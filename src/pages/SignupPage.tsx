@@ -12,6 +12,7 @@ export default function SignupPage() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const { mutate: handleSignup, isSuccess } = useSignup()
 
+    const isSingupBtnActive = !email && !password && password === confirmPassword
     useEffect(() => {
         if (isSuccess) {
             alert('회원가입 성공')
@@ -19,9 +20,30 @@ export default function SignupPage() {
         }
     }, [isSuccess])
 
+    //1. 회원가입 버튼 비활성화
+    //2. 이메일, 비밀번호, 비밀번호 확인 input에 입력이 되면, 입력된 값이 state에 저장되도록
+    //3. 비밀번호화 비밀번호 확인이 일치하는지 확인
+    //4. 회원가입 버튼 활성화
+    //5. 회원가입 버튼을 누르면, useSingup 훅을 사용해서 회원가입 여청
+    //6. 회원가입 요청이 성공하면, alert로 회원가입 성공 메시지를 띄우고, 로그인 페이지로 이동
     return (
         <Wrapper>
-            <div>
+            <Input type="text" data-cy="emailInput" onChange={(e) => setEmail(e.target.value)} />
+            <Input type="text" data-cy="passwordInput" onChange={(e) => setPassword(e.target.value)} />
+            <Input type="text" data-cy="passwordConfirmInput" onChange={(e) => setConfirmPassword(e.target.value)} />
+            {password != confirmPassword && (
+                <ErrorMessage data-testid="error-message" className="error-message">
+                    비밀번호가 일치하지 않습니다
+                </ErrorMessage>
+            )}
+            <SignupButton
+                data-cy="signupButton"
+                disabled={isSingupBtnActive}
+                onClick={() => handleSignup({ username: email, password })}
+            >
+                회원가입
+            </SignupButton>
+            {/* <div>
                 <Header>
                     <Title>이메일로 회원가입</Title>
                     <CloseButton>
@@ -71,7 +93,7 @@ export default function SignupPage() {
                 label="회원가입"
                 disabled={!email || !password || password != confirmPassword}
                 onClick={() => handleSignup({ username: email, password })}
-            />
+            /> */}
         </Wrapper>
     )
 }
@@ -131,15 +153,14 @@ const Input = styled.input`
     }
 `
 
-// const SignupButton = styled.button`
-//   width: 100%;
-//   padding: 16px;
-//   border-radius: 4px;
-//   background-color: ${(props) =>
-//     props.disabled ? "var(--mono-100)" : "var(--primary)"};
-//   color: ${(props) => (props.disabled ? "var(--mono-200)" : "var(--white)")};
-//   margin-bottom: 24px;
-// `;
+const SignupButton = styled.button`
+    width: 100%;
+    padding: 16px;
+    border-radius: 4px;
+    background-color: ${(props) => (props.disabled ? 'var(--mono-100)' : 'var(--primary)')};
+    color: ${(props) => (props.disabled ? 'var(--mono-200)' : 'var(--white)')};
+    margin-bottom: 24px;
+`
 
 const ErrorMessage = styled.h6`
     font-size: 12px;
